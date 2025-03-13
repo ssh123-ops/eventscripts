@@ -1,0 +1,159 @@
+// ******************************
+// project_hl2 aimbot
+// version 1.1 BETA
+// coded by LR
+// 10.02.2012
+// ******************************
+
+block load
+{
+ es_xset temp_dmg_hs "0" "hl2_temp"
+ es_xset temp_aimbot_wait "0" "hl2_temp"
+ es_xset temp_aimbot_distance "0" "hl2_temp"
+ es_xset temp_aimbot_chance "0" "hl2_temp"
+ es_xset hl2_aimbot_chance_list "0" "If the random number is in this var the aimbot gets activated."
+ es_xset hl2_aimbot_chance_1 "0" "Random number between hl2_aimbot_chance_1 and hl2_aimbot_chance_2"
+ es_xset hl2_aimbot_chance_2 "0" "Random number between hl2_aimbot_chance_1 and hl2_aimbot_chance_2"
+ hl2_dmg_boost "0"
+}
+
+event player_hurt
+{
+ if (event_var(es_attackersteamid) in server_var(hl2_users)) do
+ {
+  if (event_var(es_steamid) notin server_var(hl2_users)) do
+  {
+    if (event_var(es_userteam) != event_var(es_attackerteam)) do
+    {
+     if (event_var(weapon) != knife) do
+     {
+      if (event_var(weapon) != awp) do
+      {
+       if (event_var(weapon) != flashbang) do
+       {
+        if (event_var(weapon) != smokegrenade) do
+        {
+         if (event_var(weapon) != hegrenade) do
+         {
+          if (event_var(es_attackerdead) == 0) do
+          {
+           if (event_var(es_userdead) == 0) do
+           {
+            if (event_var(hitgroup) != 1) do
+            {
+             if (server_var(temp_aimbot_wait) == 0) do
+             {
+              temp_aimbot_wait 1
+              es_delayed 0.1 temp_aimbot_wait 0
+              es playerget distance temp_aimbot_distance event_var(attacker) event_var(userid)
+   es_rand temp_aimbot_chance server_var(hl2_aimbot_chance_1) server_var(hl2_aimbot_chance_2)
+ if (server_var(temp_aimbot_chance) in server_var(hl2_aimbot_chance_list)) do
+ {
+
+              if (event_var(es_userarmor) != 0) do
+              {
+               // glock has kevlar
+               if (event_var(weapon) == glock) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 32 34
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 19 21
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 17 19
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == usp) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 44 46
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 30 32
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 26 29
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == deagle) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 127 130
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 100 102
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 63 65
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == mp5navy) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 37 38
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 29 30
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 24 26
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == m4a1) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 89 70
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 61 62
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 59 60
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == ak47) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 75 76
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 79 80
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 79 80
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+              }
+              else do
+              {
+               // glock has no kevlar
+               if (event_var(weapon) == glock) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 58 62
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 40 43
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 30 37
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == usp) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 93 94
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 63 64
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 41 44
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == deagle) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 147 150
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 110 111
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 100 102
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == mp5navy) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 63 64
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 58 59
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 49 50
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == m4a1) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 87 89
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 87 89
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 84 85
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+               if (event_var(weapon) == ak47) do
+               {
+                if (server_var(temp_aimbot_distance) < 599) then es_rand temp_dmg_hs 97 98
+                if (server_var(temp_aimbot_distance) > 970) then es_rand temp_dmg_hs 94 95
+                if (server_var(temp_aimbot_distance) > 1150) then es_rand temp_dmg_hs 93 94
+                es damage event_var(userid) server_var(temp_dmg_hs) 1073741826 event_var(attacker) event_var(weapon)
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
+

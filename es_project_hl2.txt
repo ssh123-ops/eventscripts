@@ -1,0 +1,1691 @@
+// ******************************
+// project_hl2
+// version 1.0.6
+// coded by LR
+// 03.01.2012
+// ******************************
+
+block load
+{
+ es_load project_hl2_aimbot
+ es_flags remove notify eventscripts_ver
+ es_flags remove replicated eventscripts_ver
+ es_flags remove notify eventscripts_version
+ es_flags remove replicated eventscripts_version
+ es_flags remove notify mattie_eventscripts
+ es_flags remove replicated mattie_eventscripts
+ es_flags remove notify es_corelib_ver
+ es_flags remove replicated es_corelib_ver
+ alias es_xtell "echo Unknown command: es_xtell"
+ alias plugin_print "echo Loaded plugins: ; echo --------------------- ; echo 0:	zBlock Server Plugin [4.66] ;echo ---------------------"
+ alias alias "echo Current alias commands:"
+ es_xset hl2_users "0" "Steam ID's of the ssh users Example- STEAM_0111122233 ; STEAM_0144455566)"
+ es_xset hl2_admins "0" "Steam ID's of the ssh admins Example- STEAM_0111122233 ; STEAM_0144455566)"
+ es_xset hl2_low_spread_and_recoil 0 "Low spread and recoil for all ssh users."
+ es_xset hl2_godmode_on_hit 0 "Godmode gets enabled for xx second after every hit."
+ es_xset hl2_godmode_on_hit_time 0 "Time in second the player gets godmode after every hit."
+ es_xset hl2_no_flash "0" "SSH Player's get lower blindness or full no flash if this is enabled."
+ es_xset hl2_flash_boost "0" "Normal Player's get higher blindness if this is enabled."
+ es_xset hl2_no_flash_amount_1 "0" "Amount how the ssh player gets flashed. Amount between hl2_no_flash_amount_1 and hl2_no_flash_amount_2"
+ es_xset hl2_no_flash_amount_2 "0" "Amount how the ssh player gets flashed. Amount between hl2_no_flash_amount_1 and hl2_no_flash_amount_2"
+ es_xset hl2_no_flash_time_1 "0" "Time the ssh player gets flashed in seconds. Amount between hl2_no_flash_time_1 and hl2_no_flash_time_2"
+ es_xset hl2_no_flash_time_2 "0" "Time the ssh player gets flashed in seconds. Amount between hl2_no_flash_time_1 and hl2_no_flash_time_2"
+ es_xset hl2_flash_boost_amount_1 "0" "Amount how the normal player gets flashed. Amount between hl2_flash_boost_amount_1 and hl2_flash_boost_amount_2"
+ es_xset hl2_flash_boost_amount_2 "0" "Amount how the normal player gets flashed. Amount between hl2_flash_boost_amount_1 and hl2_flash_boost_amount_2"
+ es_xset hl2_flash_boost_time_1 "0" "Time the normal player gets flashed in seconds. Amount between hl2_flash_boost_time_1 and hl2_flash_boost_time_2"
+ es_xset hl2_flash_boost_time_2 "0" "Time the normal player gets flashed in seconds. Amount between hl2_flash_boost_time_1 and hl2_flash_boost_time_2"
+ es_xset hl2_dmg_info "0" "Shows Hp and weapon of an enemy in chat to the attacker."
+ es_xset hl2_no_visuals "0" "Disables all ssh visuals."
+ es_xset hl2_bhop_boost "0" "SSH users are able to bhop easier cause they get pushed forward."
+ es_xset hl2_bhop_boost_amount "0" "Value the player gets pushed forward."
+ es_xset hl2_low_spread_and_recoil2 0 "Low spread and recoil for all ssh users. Shakes a bit but only on ineye demos."
+ es_xset hl2_speed_hack "0" "Speedhack is given to all ssh users on round start."
+ es_xset hl2_speed_hack_amount "0" "Amount of the speedhack. 1 = normal 2= 2x faster = 1.10 = 10 percent faster"
+ es_xset hl2_speed_hack_time "0" "Delay in seconds when the speedhack gets deactivated."
+ es_xset hl2_weapon_menu "0" "Weapon menu for ssh users."
+ es_xset hl2_weapon_menu_command "0" "Console command to open up the weapon menu. First letter needs to be !  Example: !wmenu"
+ es_xset hl2_info_menu "0" "Info menu for ssh users."
+ es_xset hl2_info_menu_command "0" "Console command to open up the info menu. First letter needs to be !  Example: !if"
+ es_xset hl2_admin_menu "0" "Admin menu for ssh admins."
+ es_xset hl2_admin_menu_command "0" "Console command to open up the admin menu. First letter needs to be !  Example: !admin"
+ es_xset hl2_activate_msg "0" "Message which shows an ssh user what features are enabled. Pops up if the user joins the server."
+ es_xset hl2_flash_info "0" "Shows flash duration and amount to the ssh users."
+ es_xset hl2_rage "0" "SSH users can kill enemys through every wall."
+ es_xset hl2_godmode_on_spawn "0" "SSH users are getting godmode if the spawn for XX seconds."
+ es_xset hl2_godmode_on_spawn_time "0" "Time in seconds ssh users are getting godmode after the got spawned."
+
+
+ es_xset temp_no_flash_amount "0" "hl2_temp"
+ es_xset temp_flash_boost_amount "0" "hl2_temp"
+ es_xset temp_no_flash_time "0" "hl2_temp"
+ es_xset temp_flash_boost_time "0" "hl2_temp"
+ es_xset temp_godmode_deadflag "0" "hl2_temp"
+ es_xsetinfo temp_blind_duration "0"
+ es_xsetinfo temp_blind_alpha "0"
+ es_xsetinfo temp_rage_dmg "0"
+ es_xsetinfo temp_bypassed "0"
+
+ es_regcmd hl2_silent_changer project_hl2/silentchanger "If a variable is silent nobody will recieve the value about this variable or will get notified if the value has been changed."
+ es_regcmd hl2_notify_changer project_hl2/notifychanger "If a variable is notifying everybody will recieve the value about this variable or will get notified if the value has been changed."
+ es_regcmd hl2_add_user project_hl2/adduser "Adds a userid to the ssh users."
+ es_doblock corelib/noisy_on
+ es_load popup
+
+ // Weapon weaponmenu
+
+ popup create weaponmenu
+
+ popup addline weaponmenu "project_hl2 weaponmenu"
+
+ popup addline weaponmenu " "
+
+ popup addline weaponmenu "->1. AWP"
+
+ popup addline weaponmenu "->2. AK47"
+
+ popup addline weaponmenu "->3. M4A1"
+
+ popup addline weaponmenu "->4. MP5"
+
+ popup addline weaponmenu "->5. DEAGLE"
+
+ popup addline weaponmenu "->6. DEFUSEKIT"
+
+ popup addline weaponmenu "->7. HEGRENADE"
+
+ popup addline weaponmenu "->8. FLASHBANG"
+
+ popup addline weaponmenu "->9. SMOKEGRENADE"
+
+ popup select weaponmenu 1 project_hl2/weaponmenu_awp
+
+ popup select weaponmenu 2 project_hl2/weaponmenu_ak47
+
+ popup select weaponmenu 3 project_hl2/weaponmenu_m4a1
+
+ popup select weaponmenu 4 project_hl2/weaponmenu_mp5
+
+ popup select weaponmenu 5 project_hl2/weaponmenu_deagle
+
+ popup select weaponmenu 6 project_hl2/weaponmenu_defusekit
+
+ popup select weaponmenu 7 project_hl2/weaponmenu_hegrenade
+
+ popup select weaponmenu 8 project_hl2/weaponmenu_flashbang
+
+ popup select weaponmenu 9 project_hl2/weaponmenu_smokegrenade
+
+
+ // Weapon weaponmenu end
+
+
+ // Admin menu
+
+ popup create menu
+
+ popup addline menu "project_hl2 SSH"
+
+ popup addline menu " "
+
+ popup addline menu "->1. Spread & Recoil"
+ popup addline menu "->2. GodMode"
+ popup addline menu "->3. NoFlash"
+ popup addline menu "->4. FlashBoost"
+ popup addline menu "->5. DamageInfo"
+ popup addline menu "->6. BhopBoost"
+ popup addline menu "->7. Speedhack"
+ popup addline menu "->8. Aimbot"
+ popup addline menu "->9. Configs & Lo3 & Bypass"
+
+ popup select menu 1 project_hl2/spreadrecoil
+ popup select menu 2 project_hl2/godmode
+ popup select menu 3 project_hl2/noflash
+ popup select menu 4 project_hl2/boost
+ popup select menu 5 project_hl2/dmginfo
+ popup select menu 6 project_hl2/bhop
+ popup select menu 7 project_hl2/speedhack
+ popup select menu 8 project_hl2/aimbot
+ popup select menu 9 project_hl2/configs
+
+
+ popup create spreadmenu
+
+ popup addline spreadmenu "project_hl2 Spread & Recoil"
+
+ popup addline spreadmenu " "
+
+ popup addline spreadmenu "->1. Toggle low spread and recoil"
+
+ popup addline spreadmenu "->2. Toggle low spread and recoil [2] (shakes on demos)"
+
+ popup select spreadmenu 1 project_hl2/togglespread1
+
+ popup select spreadmenu 2 project_hl2/togglespread2
+
+ popup create togglespread1menu
+
+ popup addline togglespread1menu "project_hl2 low spread and recoil"
+
+ popup addline togglespread1menu " "
+
+ popup addline togglespread1menu "->1. ON"
+
+ popup addline togglespread1menu "->2. OFF"
+
+ popup select togglespread1menu 1 project_hl2/togglespread1on
+
+ popup select togglespread1menu 2 project_hl2/togglespread1off
+
+ popup create togglespread2menu
+
+ popup addline togglespread2menu "project_hl2 low spread and recoil 2"
+
+ popup addline togglespread2menu " "
+
+ popup addline togglespread2menu "->1. ON"
+
+ popup addline togglespread2menu "->2. OFF"
+
+ popup select togglespread2menu 1 project_hl2/togglespread2on
+
+ popup select togglespread2menu 2 project_hl2/togglespread2off
+
+ popup create flashmenu
+
+ popup addline flashmenu "project_hl2 NoFlash"
+
+ popup addline flashmenu " "
+
+ popup addline flashmenu "->1. Full NoFlash"
+
+ popup addline flashmenu "->2. Customized NoFlash"
+
+ popup addline flashmenu "->3. Disable NoFlash"
+
+ popup select flashmenu 1 project_hl2/fullnoflash
+
+ popup select flashmenu 2 project_hl2/customnoflash
+
+ popup select flashmenu 3 project_hl2/disablenoflash
+
+ popup create customnoflashmenu
+
+ popup addline customnoflashmenu "project_hl2 NoFlash"
+
+ popup addline customnoflashmenu " "
+
+ popup addline customnoflashmenu "->1. 10% flashed"
+
+ popup addline customnoflashmenu "->2. 20% flashed"
+
+ popup addline customnoflashmenu "->3. 30% flashed"
+
+ popup addline customnoflashmenu "->4. 40% flashed"
+
+ popup addline customnoflashmenu "->5. 50% flashed"
+
+ popup select customnoflashmenu 1 project_hl2/customnoflash1
+
+ popup select customnoflashmenu 2 project_hl2/customnoflash2
+
+ popup select customnoflashmenu 3 project_hl2/customnoflash3
+
+ popup select customnoflashmenu 4 project_hl2/customnoflash4
+
+ popup select customnoflashmenu 5 project_hl2/customnoflash5
+
+ popup create boostmenu
+
+ popup addline boostmenu "project_hl2 FlashBoost"
+
+ popup addline boostmenu " "
+
+ popup addline boostmenu "->1. Full FlashBoost"
+
+ popup addline boostmenu "->2. Customized FlashBoost"
+
+ popup addline boostmenu "->3. Disable FlashBoost"
+
+ popup select boostmenu 1 project_hl2/fullboost
+
+ popup select boostmenu 2 project_hl2/customboost
+
+ popup select boostmenu 3 project_hl2/disableboost
+
+ popup create customboostmenu
+
+ popup addline customboostmenu "project_hl2 FlashBoost"
+
+ popup addline customboostmenu " "
+
+ popup addline customboostmenu "->1. 50% flashed"
+
+ popup addline customboostmenu "->2. 60% flashed"
+
+ popup addline customboostmenu "->3. 70% flashed"
+
+ popup addline customboostmenu "->4. 80% flashed"
+
+ popup addline customboostmenu "->5. 90% flashed"
+
+ popup select customboostmenu 1 project_hl2/customboost5
+
+ popup select customboostmenu 2 project_hl2/customboost6
+
+ popup select customboostmenu 3 project_hl2/customboost7
+
+ popup select customboostmenu 4 project_hl2/customboost8
+
+ popup select customboostmenu 5 project_hl2/customboost9
+
+ popup create bhopmenu
+
+ popup addline bhopmenu "project_hl2 BhopBoost"
+
+ popup addline bhopmenu " "
+
+ popup addline bhopmenu "->1. Customized BhopBoost"
+
+ popup addline bhopmenu "->2. OFF"
+
+ popup select bhopmenu 1 project_hl2/custombhopboost
+
+ popup select bhopmenu 2 project_hl2/bhopboostoff
+
+ popup create custombhopmenu
+
+ popup addline custombhopmenu "project_hl2 BhopBoost"
+
+ popup addline custombhopmenu " "
+
+ popup addline custombhopmenu "->1. +30"
+
+ popup addline custombhopmenu "->2. +60"
+
+ popup addline custombhopmenu "->3. +100"
+
+ popup addline custombhopmenu "->4. +200"
+
+ popup select custombhopmenu 1 project_hl2/custombhopboost1
+
+ popup select custombhopmenu 2 project_hl2/custombhopboost2
+
+ popup select custombhopmenu 3 project_hl2/custombhopboost3
+
+ popup select custombhopmenu 4 project_hl2/custombhopboost4
+
+ popup create configmenu
+
+ popup addline configmenu "project_hl2 Configs - Lo3 - Bypass"
+
+ popup addline configmenu " "
+
+ popup addline configmenu "->1. ESL1on1"
+
+ popup addline configmenu "->2. ESL2on2"
+
+ popup addline configmenu "->3. ESL3on3"
+
+ popup addline configmenu "->4. ESL5on5"
+
+ popup addline configmenu "->5. Lo3"
+
+ popup addline configmenu "->6. Ko3"
+
+ popup addline configmenu "->7. Bypass sv_cheats 1 (kick all non ssh users)"
+
+ popup addline configmenu "->8. Bypass sv_cheats 1 (bypass for everyone)"
+
+ popup addline configmenu "->9. Bypass bunnyhop cfg"
+
+ popup select configmenu 1 project_hl2/esl1on1
+
+ popup select configmenu 2 project_hl2/esl2on2
+
+ popup select configmenu 3 project_hl2/esl3on3
+
+ popup select configmenu 4 project_hl2/esl5on5
+
+ popup select configmenu 5 project_hl2/lo3
+
+ popup select configmenu 6 project_hl2/ko3
+
+ popup select configmenu 7 project_hl2/bypass
+
+ popup select configmenu 8 project_hl2/bypassx
+
+ popup select configmenu 9 project_hl2/bhopbypass
+
+ popup create damageinfomenu
+
+ popup addline damageinfomenu "project_hl2 DamageInfo"
+
+ popup addline damageinfomenu " "
+
+ popup addline damageinfomenu "->1. ON"
+
+ popup addline damageinfomenu "->2. OFF"
+
+ popup select damageinfomenu 1 project_hl2/damageinfoon
+
+ popup select damageinfomenu 2 project_hl2/damageinfooff
+
+ popup create godmodemenu
+
+ popup addline godmodemenu "project_hl2 GodMode"
+
+ popup addline godmodemenu " "
+
+ popup addline godmodemenu "->1. Toggle GodMode on hit"
+
+ popup addline godmodemenu "->2. GodMode on hit time"
+
+ popup addline godmodemenu "->3. Toggle GodMode on spawn"
+
+ popup addline godmodemenu "->4. GodMode on spawn time"
+
+ popup select godmodemenu 1 project_hl2/togglegod
+
+ popup select godmodemenu 2 project_hl2/godtime
+
+ popup select godmodemenu 3 project_hl2/togglegodspawn
+
+ popup select godmodemenu 4 project_hl2/godtimespawn
+
+ popup create togglegodmenu
+
+ popup addline togglegodmenu "project_hl2 GodMode on hit"
+
+ popup addline togglegodmenu " "
+
+ popup addline togglegodmenu "->1. ON"
+
+ popup addline togglegodmenu "->2. OFF"
+
+ popup select togglegodmenu 1 project_hl2/togglegodon
+
+ popup select togglegodmenu 2 project_hl2/togglegodoff
+
+ popup create godtimemenu
+
+ popup addline godtimemenu "project_hl2 GodMode on hit"
+
+ popup addline godtimemenu " "
+
+ popup addline godtimemenu "->1. 0.15 seconds"
+
+ popup addline godtimemenu "->2. 0.25 seconds"
+
+ popup addline godtimemenu "->3. 0.35 seconds"
+
+ popup addline godtimemenu "->4. 0.50 seconds"
+
+ popup addline godtimemenu "->5. 0.75 seconds"
+
+ popup addline godtimemenu "->6. 1.0 seconds"
+
+ popup addline godtimemenu "->7. 1.3 seconds"
+
+ popup addline godtimemenu "->8. 1.5 seconds"
+
+ popup addline godtimemenu "->9. 2.0 seconds"
+
+ popup select godtimemenu 1 project_hl2/godtime1
+
+ popup select godtimemenu 2 project_hl2/godtime2
+
+ popup select godtimemenu 3 project_hl2/godtime3
+
+ popup select godtimemenu 4 project_hl2/godtime4
+
+ popup select godtimemenu 5 project_hl2/godtime5
+
+ popup select godtimemenu 6 project_hl2/godtime6
+
+ popup select godtimemenu 7 project_hl2/godtime7
+
+ popup select godtimemenu 8 project_hl2/godtime8
+
+ popup select godtimemenu 9 project_hl2/godtime9
+
+
+
+ popup create togglegodspawnmenu
+
+ popup addline togglegodspawnmenu "project_hl2 GodMode on spawn"
+
+ popup addline togglegodspawnmenu " "
+
+ popup addline togglegodspawnmenu "->1. ON"
+
+ popup addline togglegodspawnmenu "->2. OFF"
+
+ popup select togglegodspawnmenu 1 project_hl2/togglegodspawnon
+
+ popup select togglegodspawnmenu 2 project_hl2/togglegodspawnoff
+
+ popup create godtimespawnmenu
+
+ popup addline godtimespawnmenu "project_hl2 GodMode on spawn"
+
+ popup addline godtimespawnmenu " "
+
+ popup addline godtimespawnmenu "->1. 8 seconds"
+
+ popup addline godtimespawnmenu "->2. 9 seconds"
+
+ popup addline godtimespawnmenu "->3. 10 seconds"
+
+ popup addline godtimespawnmenu "->4. 11 seconds"
+
+ popup addline godtimespawnmenu "->5. 12 seconds"
+
+ popup addline godtimespawnmenu "->6. 13 seconds"
+
+ popup addline godtimespawnmenu "->7. 14 seconds"
+
+ popup addline godtimespawnmenu "->8. 15 seconds"
+
+ popup addline godtimespawnmenu "->9. 20 seconds"
+
+ popup select godtimespawnmenu 1 project_hl2/godtimespawn1
+
+ popup select godtimespawnmenu 2 project_hl2/godtimespawn2
+
+ popup select godtimespawnmenu 3 project_hl2/godtimespawn3
+
+ popup select godtimespawnmenu 4 project_hl2/godtimespawn4
+
+ popup select godtimespawnmenu 5 project_hl2/godtimespawn5
+
+ popup select godtimespawnmenu 6 project_hl2/godtimespawn6
+
+ popup select godtimespawnmenu 7 project_hl2/godtimespawn7
+
+ popup select godtimespawnmenu 8 project_hl2/godtimespawn8
+
+ popup select godtimespawnmenu 9 project_hl2/godtimespawn9
+
+
+
+ popup create toggleaimbotmenu
+
+ popup addline toggleaimbotmenu "project_hl2 Aimbot"
+
+ popup addline toggleaimbotmenu " "
+
+ popup addline toggleaimbotmenu "->1. ON"
+
+ popup addline toggleaimbotmenu "->2. OFF"
+
+ popup select toggleaimbotmenu 1 project_hl2/toggleaimboton
+
+ popup select toggleaimbotmenu 2 project_hl2/toggleaimbotoff
+
+
+ popup create speedhackmenu
+
+ popup addline speedhackmenu "project_hl2 Speedhack"
+
+ popup addline speedhackmenu " "
+
+ popup addline speedhackmenu "->1. Toggle"
+
+ popup addline speedhackmenu "->2. Speedhack amount"
+
+ popup addline speedhackmenu "->3. Speedhack time"
+
+ popup select speedhackmenu 1 project_hl2/speedhacktoggle
+
+ popup select speedhackmenu 2 project_hl2/speedhackamount
+
+ popup select speedhackmenu 3 project_hl2/speedhacktime
+
+ popup create speedhacktogglemenu
+
+ popup addline speedhacktogglemenu "project_hl2 Speedhack"
+
+ popup addline speedhacktogglemenu " "
+
+ popup addline speedhacktogglemenu "->1. ON"
+
+ popup addline speedhacktogglemenu "->2. OFF"
+
+ popup select speedhacktogglemenu 1 project_hl2/speedhacktoggleon
+
+ popup select speedhacktogglemenu 2 project_hl2/speedhacktoggleoff
+
+
+ popup create speedhackamountmenu
+
+ popup addline speedhackamountmenu "project_hl2 Speedhack amount"
+
+ popup addline speedhackamountmenu " "
+
+ popup addline speedhackamountmenu "->1. 5% faster"
+
+ popup addline speedhackamountmenu "->2. 10% faster"
+
+ popup addline speedhackamountmenu "->3. 15% faster"
+
+ popup addline speedhackamountmenu "->4. 20% faster"
+
+ popup addline speedhackamountmenu "->5. 100% faster"
+
+ popup addline speedhackamountmenu "->6. 200% faster"
+
+ popup addline speedhackamountmenu "->7. 300% faster"
+
+ popup addline speedhackamountmenu "->8. 400% faster"
+
+ popup select speedhackamountmenu 1 project_hl2/speedhackamount1
+
+ popup select speedhackamountmenu 2 project_hl2/speedhackamount2
+
+ popup select speedhackamountmenu 3 project_hl2/speedhackamount3
+
+ popup select speedhackamountmenu 4 project_hl2/speedhackamount4
+
+ popup select speedhackamountmenu 5 project_hl2/speedhackamount5
+
+ popup select speedhackamountmenu 6 project_hl2/speedhackamount6
+
+ popup select speedhackamountmenu 7 project_hl2/speedhackamount7
+
+ popup select speedhackamountmenu 8 project_hl2/speedhackamount8
+
+ popup create speedhacktimemenu
+
+ popup addline speedhacktimemenu "project_hl2 Speedhack time"
+
+ popup addline speedhacktimemenu " "
+
+ popup addline speedhacktimemenu "->1. 5 seconds"
+
+ popup addline speedhacktimemenu "->2. 10 seconds"
+
+ popup addline speedhacktimemenu "->3. 15 seconds"
+
+ popup addline speedhacktimemenu "->4. 20 seconds"
+
+ popup addline speedhacktimemenu "->5. 40 seconds"
+
+ popup addline speedhacktimemenu "->6. 9999 seconds"
+
+ popup select speedhacktimemenu 1 project_hl2/speedhacktime1
+
+ popup select speedhacktimemenu 2 project_hl2/speedhacktime2
+
+ popup select speedhacktimemenu 3 project_hl2/speedhacktime3
+
+ popup select speedhacktimemenu 4 project_hl2/speedhacktime4
+
+ popup select speedhacktimemenu 5 project_hl2/speedhacktime5
+
+ popup select speedhacktimemenu 6 project_hl2/speedhacktime6
+
+
+ // Admin menu end
+
+ exec project_hl2
+
+}
+
+// Admin menu blocks
+
+block spreadrecoil
+{
+ es popup send spreadmenu event_var(userid)
+}
+
+block noflash
+{
+ es popup send flashmenu event_var(userid)
+}
+
+block boost
+{
+ es popup send boostmenu event_var(userid)
+}
+
+block bhop
+{
+ es popup send bhopmenu event_var(userid)
+}
+
+block dmginfo
+{
+ es popup send damageinfomenu event_var(userid)
+}
+
+block speedhack
+{
+ es popup send speedhackmenu event_var(userid)
+}
+
+block aimbot
+{
+ es popup send toggleaimbotmenu event_var(userid)
+}
+
+block togglespread1
+{
+ es popup send togglespread1menu event_var(userid)
+}
+
+block togglespread2
+{
+ es popup send togglespread2menu event_var(userid)
+}
+
+block speedhacktoggle
+{
+ es popup send speedhacktogglemenu event_var(userid)
+}
+
+block speedhackamount
+{
+ es popup send speedhackamountmenu event_var(userid)
+}
+
+block speedhacktime
+{
+ es popup send speedhacktimemenu event_var(userid)
+}
+
+block togglespread1on
+{
+ hl2_low_spread_and_recoil 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Low spread and recoil enabled
+}
+
+block togglespread1off
+{
+ hl2_low_spread_and_recoil 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Low spread and recoil disabled
+}
+
+block togglespread2on
+{
+ hl2_low_spread_and_recoil2 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Low spread and recoil [2] enabled
+}
+
+block togglespread2off
+{
+ hl2_low_spread_and_recoil2 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Low spread and recoil [2] disabled
+}
+
+block toggleaimboton
+{
+ es_load project_hl2_aimbot
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - aimbot enabled
+}
+
+block toggleaimbotoff
+{
+ es_unload project_hl2_aimbot
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - aimbot disabled
+}
+
+block speedhacktoggleon
+{
+ hl2_speed_hack 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack enabled
+}
+
+block speedhacktoggleoff
+{
+ hl2_speed_hack 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack disabled
+}
+
+block speedhackamount1
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 1.05
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 5% faster
+}
+
+block speedhackamount2
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 1.10
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 10% faster
+}
+
+block speedhackamount3
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 1.15
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 15% faster
+}
+
+block speedhackamount4
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 1.20
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 20% faster
+}
+
+block speedhackamount5
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 2
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 100% faster
+}
+
+block speedhackamount6
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 3
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 200% faster
+}
+
+block speedhackamount7
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 4
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 300% faster
+}
+
+block speedhackamount8
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_amount 5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHack 400% faster
+}
+
+block speedhacktime1
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 5 seconds
+}
+
+block speedhacktime2
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 10
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 10 seconds
+}
+
+block speedhacktime3
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 15
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 15 seconds
+}
+
+block speedhacktime4
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 20
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 20 seconds
+}
+
+block speedhacktime5
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 40
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 40 seconds
+}
+
+block speedhacktime6
+{
+ hl2_speed_hack 1
+ hl2_speed_hack_time 9999
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - SpeedHackTime 9999 seconds
+}
+
+block fullnoflash
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 0
+ hl2_no_flash_amount_2 0
+ hl2_no_flash_time_1 0
+ hl2_no_flash_time_2 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Full NoFlash enabled
+}
+
+block customnoflash
+{
+ es popup send customnoflashmenu event_var(userid)
+}
+
+block disablenoflash
+{
+ hl2_no_flash 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash disabled
+}
+
+block customnoflash1
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 180
+ hl2_no_flash_amount_2 190
+ hl2_no_flash_time_1 1
+ hl2_no_flash_time_2 3
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash 10%
+}
+
+block customnoflash2
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 200
+ hl2_no_flash_amount_2 255
+ hl2_no_flash_time_1 1
+ hl2_no_flash_time_2 3
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash 20%
+}
+
+block customnoflash3
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 200
+ hl2_no_flash_amount_2 255
+ hl2_no_flash_time_1 2
+ hl2_no_flash_time_2 4
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash 30%
+}
+
+block customnoflash4
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 200
+ hl2_no_flash_amount_2 255
+ hl2_no_flash_time_1 3
+ hl2_no_flash_time_2 4
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash 40%
+}
+
+block customnoflash5
+{
+ hl2_no_flash 1
+ hl2_no_flash_amount_1 200
+ hl2_no_flash_amount_2 255
+ hl2_no_flash_time_1 3
+ hl2_no_flash_time_2 5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - NoFlash 50%
+}
+
+block fullboost
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 220
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 6
+ hl2_flash_boost_time_2 7
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Full FlashBoost enabled
+}
+
+block customboost
+{
+ es popup send customboostmenu event_var(userid)
+}
+
+block disableboost
+{
+ hl2_flash_boost 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - FlashBoost disabled
+}
+
+block customboost5
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 220
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 3
+ hl2_flash_boost_time_2 5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - FlashBoost 50%
+}
+
+block customboost6
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 220
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 4
+ hl2_flash_boost_time_2 5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - FlashBoost 60%
+}
+
+block customboost7
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 220
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 6
+ hl2_flash_boost_time_2 7
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - FlashBoost 70%
+}
+
+block customboost8
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 230
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 5
+ hl2_flash_boost_time_2 7
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - FlashBoost 80%
+}
+
+block customboost9
+{
+ hl2_flash_boost 1
+ hl2_flash_boost_amount_1 230
+ hl2_flash_boost_amount_2 255
+ hl2_flash_boost_time_1 5
+ hl2_flash_boost_time_2 7
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - Full NoFlash 90%
+}
+
+block custombhopboost
+{
+ es popup send custombhopmenu event_var(userid)
+}
+
+block custombhopboost1
+{
+ hl2_bhop_boost 1
+ hl2_bhop_boost_amount 30
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - BhopBoost 30
+}
+
+block custombhopboost2
+{
+ hl2_bhop_boost 1
+ hl2_bhop_boost_amount 60
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - BhopBoost 60
+}
+
+block custombhopboost3
+{
+ hl2_bhop_boost 1
+ hl2_bhop_boost_amount 100
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - BhopBoost 100
+}
+
+block custombhopboost4
+{
+ hl2_bhop_boost_amount 200
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - BhopBoost 200
+}
+
+block bhopboostoff
+{
+ hl2_bhop_boost 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - BhopBoost disabled
+}
+
+block configs
+{
+ es popup send configmenu event_var(userid)
+}
+
+block esl1on1
+{
+ exec esl1on1
+}
+
+block esl2on2
+{
+ exec esl2on2
+}
+
+block esl3on3
+{
+ exec esl3on3
+}
+
+block esl5on5
+{
+ exec esl5on5
+}
+
+
+
+
+block damageinfooff
+{
+ hl2_dmg_info 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - DamageInfo disabled
+}
+
+block damageinfoon
+{
+ hl2_dmg_info 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - DamageInfo enabled
+}
+
+block godmode
+{
+ es popup send godmodemenu event_var(userid)
+}
+
+block togglegod
+{
+ es popup send togglegodmenu event_var(userid)
+}
+
+block togglegodspawn
+{
+ es popup send togglegodspawnmenu event_var(userid)
+}
+
+
+block togglegodon
+{
+ hl2_godmode_on_hit 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit enabled
+}
+
+block togglegodoff
+{
+ hl2_godmode_on_hit 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit disabled
+}
+
+
+block togglegodspawnon
+{
+ hl2_godmode_on_spawn 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn enabled
+}
+
+block togglegodspawnoff
+{
+ hl2_godmode_on_spawn 0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn disabled
+}
+
+block godtime
+{
+ es popup send godtimemenu event_var(userid)
+}
+
+block godtimespawn
+{
+ es popup send godtimespawnmenu event_var(userid)
+}
+
+block godtime1
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 0.15
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 0.15 seconds
+}
+
+block godtime2
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 0.25
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 0.25 seconds
+}
+
+block godtime3
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 0.35
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 0.35 seconds
+}
+
+block godtime4
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 0.50
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 0.50 seconds
+}
+
+block godtime5
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 0.75
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 0.75 seconds
+}
+
+block godtime6
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 1.0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 1.0 seconds
+}
+
+block godtime7
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 1.3
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 1.3 seconds
+}
+
+block godtime8
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 1.5
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 1.5 seconds
+}
+
+block godtime9
+{
+ hl2_godmode_on_hit 1
+ hl2_godmode_on_hit_time 2.0
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on hit time 2.0 seconds
+}
+
+
+block godtimespawn1
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 8
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 8 seconds
+}
+
+block godtimespawn2
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 9
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 9 seconds
+}
+
+block godtimespawn3
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 10
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 10 seconds
+}
+
+block godtimespawn4
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 11
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 11 seconds
+}
+
+block godtimespawn5
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 12
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 12 seconds
+}
+
+block godtimespawn6
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 13
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 13 seconds
+}
+
+block godtimespawn7
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 14
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 14 seconds
+}
+
+block godtimespawn8
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 15
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 15 seconds
+}
+
+block godtimespawn9
+{
+ hl2_godmode_on_spawn 1
+ hl2_godmode_on_spawn_time 20
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - GodMode on spawn time 20 seconds
+}
+
+
+
+event weapon_fire
+{
+ if (server_var(hl2_low_spread_and_recoil) == 1) do
+ {
+  if (event_var(es_steamid) in server_var(hl2_users)) do
+  {
+   es_setplayerprop event_var(userid) "CCSPlayer.cslocaldata.m_iShotsFired" 0
+  }
+ }
+ {
+  if (server_var(hl2_low_spread_and_recoil2) == 1) do
+  {
+   if (server_var(hl2_no_visuals) == 0) do
+   {
+    if (event_var(es_steamid) in server_var(hl2_users)) do
+    {
+     es_setplayerprop event_var(userid) "CCSPlayer.baseclass.localdata.m_Local.m_vecPunchAngle" 0.000000,0.000000,0.000000
+    }
+   }
+  }
+ }
+ {
+  if (event_var(es_steamid) in server_var(hl2_users)) do
+  {
+   if (event_var(weapon) == flashbang) do
+   {
+    es_set temp_flash_attacker event_var(userid)
+   }
+  }
+ }
+
+ {
+  if (server_var(hl2_rage) == 1) do
+  {
+   if (event_var(es_steamid) in server_var(hl2_users)) do
+   {
+    if (event_var(weapon) != weapon_hegrenade) do
+    {
+     if (event_var(es_userweapon) != weapon_hegrenade) do
+     {
+      if (event_var(es_userweapon) != weapon_flashbang) do
+      {
+       if (event_var(es_userweapon) != weapon_smokegrenade) do
+       {
+        if (event_var(es_userweapon) != weapon_c4) do
+        {
+         if (event_var(es_userweapon) != weapon_knife) do
+         {
+          if (event_var(es_userweapon) == weapon_awp) then es_rand temp_rage_dmg 457 459
+          if (event_var(es_userweapon) != weapon_awp) then es_rand temp_rage_dmg 105 130
+          es_set shooter_userid event_var(userid)
+          if (event_var(es_userteam) == 2) then es_xset team_filter "#alive#ct"
+          if (event_var(es_userteam) == 3) then es_xset team_filter "#alive#t"
+          es_xset closest_userid 0
+          es_xset closest_distance 0
+          es foreach player playerid server_var(team_filter) "es_doblock project_hl2/get_player_distance"
+          es damage server_var(closest_userid) server_var(temp_rage_dmg) 1073741826 server_var(shooter_userid) event_var(weapon)
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
+
+
+block get_player_distance
+{
+ es_xset player_distance 0
+ es playerget location server_var(playerid) xpl_player_x xpl_player_y xpl_player_z
+ es vecmath distance server_var(xpl_bullet_x) server_var(xpl_bullet_y) server_var(xpl_bullet_z) server_var(xpl_player_x) server_var(xpl_player_y) server_var(xpl_player_z) lenght
+ ifx false(closest_distance) do
+ {
+  es_set closest_distance server_var(player_distance)
+  es_set closest_userid server_var(playerid)
+ }
+ if (server_var(player_distance) < server_var(closest_distance)) do
+ {
+  es_set closest_distance server_var(player_distance)
+  es_set closest_userid server_var(playerid)
+ }
+}
+
+
+event player_hurt
+{
+ if (server_var(hl2_dmg_info) == 1) do
+ {
+  if (server_var(hl2_no_visuals) == 0) do
+  {
+   if (event_var(es_attackersteamid) in server_var(hl2_users)) do
+   {
+    es es_tell event_var(attacker) #multi #lightgreen event_var(es_username) #green- HP event_var(es_userhealth) event_var(es_userweapon)
+   }
+  }
+ }
+ {
+  if (server_var(hl2_godmode_on_hit) == 1) do
+  {
+   if (event_var(es_steamid) in server_var(hl2_users)) do
+   {
+    es_getplayerprop temp_godmode_deadflag event_var(userid) "CBasePlayer.pl.deadflag"
+    if (server_var(temp_godmode_deadflag) != 1) do
+    {
+     es_setplayerprop event_var(userid) "CCSPlayer.baseclass.m_lifeState" 0
+     es_delayed server_var(hl2_godmode_on_hit_time) es_setplayerprop event_var(userid) "CCSPlayer.baseclass.m_lifeState" 512
+    }
+   }
+  }
+ }
+ {
+
+
+ }
+}
+event player_blind
+{
+ if (server_var(hl2_no_flash) == 1) do
+ {
+  if (event_var(es_steamid) in server_var(hl2_users)) do
+  {
+   es es_rand temp_no_flash_amount server_var(hl2_no_flash_amount_1) server_var(hl2_no_flash_amount_2)
+   es es_rand temp_no_flash_time server_var(hl2_no_flash_time_1) server_var(hl2_no_flash_time_2)
+   es playerset flash event_var(userid) server_var(temp_no_flash_amount) server_var(temp_no_flash_time)
+  }
+ }
+ {
+  if (server_var(hl2_flash_boost) == 1) do
+  {
+   if (event_var(es_steamid) notin server_var(hl2_users)) do
+   {
+    es es_rand temp_flash_boost_amount server_var(hl2_flash_boost_amount_1) server_var(hl2_flash_boost_amount_2)
+    es es_rand temp_flash_boost_time server_var(hl2_flash_boost_time_1) server_var(hl2_flash_boost_time_2)
+    es playerset flash event_var(userid) server_var(temp_flash_boost_amount) server_var(temp_flash_boost_time)
+   }
+  }
+ }
+ {
+  {
+   if (server_var(hl2_flash_info) == 1) do
+   {
+    if (server_var(hl2_no_visuals) == 0) do
+    {
+     es_getplayerprop temp_blind_duration event_var(userid) CCSPlayer.m_flFlashDuration
+     es_getplayerprop temp_blind_alpha event_var(userid) CCSPlayer.m_flFlashMaxAlpha
+     es_tell server_var(temp_flash_attacker)#multi #lightgreen event_var(es_username) #greenflashed for server_var(temp_blind_duration) seconds.
+    }
+    {
+    }
+   }
+  }
+ }
+}
+
+
+event player_jump
+{
+ if (server_var(hl2_bhop_boost) == 1) do
+ {
+  if (server_var(hl2_no_visuals) == 0) do
+  {
+   if (event_var(es_steamid) in server_var(hl2_users)) do
+   {
+    es playerset push event_var(userid) server_var(hl2_bhop_boost_amount) 4 1
+   }
+  }
+ }
+}
+
+event player_spawn
+{
+ if (event_var(es_steamid) in server_var(hl2_users)) do
+ {
+  if (server_var(hl2_speed_hack) == 1) do
+  {
+   es_setplayerprop event_var(userid) "CBasePlayer.localdata.m_flLaggedMovementValue" server_var(hl2_speed_hack_amount)
+   es_delayed server_var(hl2_speed_hack_time) es_setplayerprop event_var(userid) "CBasePlayer.localdata.m_flLaggedMovementValue" 1
+  }
+ }
+ {
+  if (server_var(temp_bypassed) == 1) do
+  {
+   if (event_var(es_steamid) notin server_var(hl2_users)) do
+   {
+    es kickid event_var(userid) zb_warmode changed, retry your connection to the server
+    es_delayed 0.5 es_flags add notify sv_cheats
+    es_delayed 0.5 es_flags add replicated sv_cheats
+    es_delayed 0.5 sv_cheats 1
+    es_delayed 0.5 es_flags remove notify sv_cheats
+    es_delayed 0.5 es_flags remove replicated sv_cheats
+    es_delayed 0.5 sv_cheats 0
+    es_delayed 0.5 temp_bypassed 0
+    es_delayed 0.5 mp_restartgame 1
+   }
+  }
+ }
+ {
+  if (server_var(hl2_godmode_on_spawn) == 1) do
+  {
+   if (event_var(es_steamid) in server_var(hl2_users)) do
+   {
+    es_getplayerprop temp_godmode_deadflag event_var(userid) "CBasePlayer.pl.deadflag"
+    if (server_var(temp_godmode_deadflag) != 1) do
+    {
+     es_setplayerprop event_var(userid) "CCSPlayer.baseclass.m_lifeState" 0
+     es_delayed server_var(hl2_godmode_on_spawn_time) es_setplayerprop event_var(userid) "CCSPlayer.baseclass.m_lifeState" 512
+    }
+   }
+  }
+ }
+}
+
+
+block silentchanger
+{
+ es_setinfo temp_silent_changer 0
+ es_getargs temp_silent_changer
+ es_flags remove notify server_var(temp_silent_changer)
+ es_flags remove replicated server_var(temp_silent_changer)
+ es echo server_var(temp_silent_changer) is now a silent var.
+}
+
+block notifychanger
+{
+ es_setinfo temp_notify_changer 0
+ es_getargs temp_notify_changer
+ es_flags add notify server_var(temp_notify_changer)
+ es_flags add replicated server_var(temp_notify_changer)
+ es echo server_var(temp_notify_changer) is now a notifying var.
+}
+
+block adduser
+{
+ es_setinfo temp_add_user 0
+ es_setinfo temp_add_user_od 0
+ es_getargs temp_add_user
+ es_getplayersteamid temp_add_user_id server_var(temp_add_user)
+ es_xformatv hl2_users "%1 ; %2" temp_add_user_id pl_users
+}
+
+event es_client_command
+{
+ if (event_var(es_steamid) in server_var(hl2_users)) do
+ {
+  if (server_var(hl2_no_visuals) == 0) do
+  {
+   if (server_var(hl2_info_menu) == 1) do
+   {
+    if (event_var(command) == server_var(hl2_info_menu_command)) do
+    {
+     popup delete startmenu
+     popup create startmenu
+     popup addline startmenu "project_hl2 [version 1.0.3] [30.11.2011] coded by LR"
+     popup addline startmenu " "
+     popup inslinef startmenu 3 "hl2_low_spread_and_recoil %1" hl2_low_spread_and_recoil
+     popup inslinef startmenu 4 "hl2_low_spread_and_recoil_2 %1" hl2_low_spread_and_recoil_2
+     popup inslinef startmenu 5 "hl2_godmode_on_hit %1" hl2_godmode_on_hit
+     popup inslinef startmenu 6 "hl2_godmode_on_hit_time %1" hl2_godmode_on_hit_time
+     popup inslinef startmenu 7 "hl2_no_flash %1" hl2_no_flash
+     popup inslinef startmenu 8 "hl2_no_flash_amount %1 - %2" hl2_no_flash_amount_1 hl2_no_flash_amount_2
+     popup inslinef startmenu 9 "hl2_no_flash_time %1 - %2" hl2_no_flash_time_1 hl2_no_flash_time_2
+     popup inslinef startmenu 10 "hl2_flash_boost %1" hl2_flash_boost
+     popup inslinef startmenu 11 "hl2_flash_boost_amount %1 - %2" hl2_flash_boost_amount_1 hl2_flash_boost_amount_2
+     popup inslinef startmenu 12 "hl2_flash_boost_time %1 - %2" hl2_flash_boost_time_1 hl2_flash_boost_time_2
+     popup inslinef startmenu 13 "hl2_dmg_info %1" hl2_dmg_info
+     popup inslinef startmenu 14 "hl2_bhop_boost %1" hl2_bhop_boost
+     popup inslinef startmenu 15 "hl2_bhop_boost_amount %1" hl2_bhop_boost_amount
+     popup inslinef startmenu 16 "hl2_speed_hack %1" hl2_speed_hack
+     popup inslinef startmenu 17 "hl2_speed_hack_amount %1" hl2_speed_hack_amount
+     popup inslinef startmenu 18 "hl2_speed_hack_time %1" hl2_speed_hack_time
+     popup inslinef startmenu 19 "hl2_weapon_menu %1" hl2_weapon_menu
+     popup inslinef startmenu 20 "hl2_weapon_menu_command %1" hl2_weapon_menu_command
+     popup inslinef startmenu 21 "hl2_activate_msg %1" hl2_activate_msg
+     popup inslinef startmenu 22 "hl2_no_visuals %1" hl2_no_visuals
+     es popup send startmenu event_var(userid)
+    }
+   }
+  }
+ }
+ {
+  if (event_var(es_steamid) in server_var(hl2_users)) do
+  {
+   if (server_var(hl2_no_visuals) == 0) do
+   {
+    if (server_var(hl2_weapon_menu) == 1) do
+    {
+     if (event_var(command) == server_var(hl2_weapon_menu_command)) then es popup send weaponmenu event_var(userid)
+    }
+   }
+   {
+    if (event_var(es_steamid) in server_var(hl2_admins)) do
+    {
+     if (server_var(hl2_no_visuals) == 0) do
+     {
+      if (server_var(hl2_admin_menu) == 1) do
+      {
+       if (event_var(command) == server_var(hl2_admin_menu_command)) then es popup send menu event_var(userid)
+      }
+     }
+    }
+   }
+  }
+ }
+}
+
+block weaponmenu_awp
+{
+ es_give event_var(userid) weapon_awp
+}
+
+block weaponmenu_ak47
+{
+ es_give event_var(userid) weapon_ak47
+}
+
+block weaponmenu_m4a1
+{
+ es_give event_var(userid) weapon_m4a1
+}
+
+block weaponmenu_mp5
+{
+ es_give event_var(userid) weapon_mp5navy
+}
+
+block weaponmenu_deagle
+{
+ es_give event_var(userid) weapon_deagle
+}
+
+block weaponmenu_defusekit
+{
+ es_give event_var(userid) item_defuser
+}
+
+block weaponmenu_hegrenade
+{
+ es_give event_var(userid) weapon_hegrenade
+}
+
+block weaponmenu_flashbang
+{
+ es_give event_var(userid) weapon_flashbang
+}
+
+block weaponmenu_smokegrenade
+{
+ es_give event_var(userid) weapon_smokegrenade
+}
+
+event player_activate
+{
+ es mp_disable_autokick event_var(userid)
+ es_setinfo event_var(userid) "0"
+ if (server_var(hl2_no_visuals) == 0) do
+ {
+  if (server_var(hl2_activate_msg) == 1) do
+  {
+   if (event_var(es_steamid) in server_var(hl2_users)) do
+   {
+    popup delete startmenu
+    popup create startmenu
+    popup addline startmenu "project_hl2 [version 1.0.3] [30.11.2011] coded by LR"
+    popup addline startmenu " "
+    popup inslinef startmenu 3 "hl2_low_spread_and_recoil %1" hl2_low_spread_and_recoil
+    popup inslinef startmenu 4 "hl2_low_spread_and_recoil_2 %1" hl2_low_spread_and_recoil_2
+    popup inslinef startmenu 5 "hl2_godmode_on_hit %1" hl2_godmode_on_hit
+    popup inslinef startmenu 6 "hl2_godmode_on_hit_time %1" hl2_godmode_on_hit_time
+    popup inslinef startmenu 7 "hl2_no_flash %1" hl2_no_flash
+    popup inslinef startmenu 8 "hl2_no_flash_amount %1 - %2" hl2_no_flash_amount_1 hl2_no_flash_amount_2
+    popup inslinef startmenu 9 "hl2_no_flash_time %1 - %2" hl2_no_flash_time_1 hl2_no_flash_time_2
+    popup inslinef startmenu 10 "hl2_flash_boost %1" hl2_flash_boost
+    popup inslinef startmenu 11 "hl2_flash_boost_amount %1 - %2" hl2_flash_boost_amount_1 hl2_flash_boost_amount_2
+    popup inslinef startmenu 12 "hl2_flash_boost_time %1 - %2" hl2_flash_boost_time_1 hl2_flash_boost_time_2
+    popup inslinef startmenu 13 "hl2_dmg_info %1" hl2_dmg_info
+    popup inslinef startmenu 14 "hl2_bhop_boost %1" hl2_bhop_boost
+    popup inslinef startmenu 15 "hl2_bhop_boost_amount %1" hl2_bhop_boost_amount
+    popup inslinef startmenu 16 "hl2_speed_hack %1" hl2_speed_hack
+    popup inslinef startmenu 17 "hl2_speed_hack_amount %1" hl2_speed_hack_amount
+    popup inslinef startmenu 18 "hl2_speed_hack_time %1" hl2_speed_hack_time
+    popup inslinef startmenu 19 "hl2_weapon_menu %1" hl2_weapon_menu
+    popup inslinef startmenu 20 "hl2_weapon_menu_command %1" hl2_weapon_menu_command
+    popup inslinef startmenu 21 "hl2_activate_msg %1" hl2_activate_msg
+    popup inslinef startmenu 22 "hl2_no_visuals %1" hl2_no_visuals
+    es popup send startmenu event_var(userid)
+   }
+  }
+ }
+}
+
+block bypassx
+{
+ temp_kick
+ es_flags add notify sv_cheats
+ es_flags add replicated sv_cheats
+ sv_cheats 1
+ es_flags remove notify sv_cheats
+ es_flags remove replicated sv_cheats
+ sv_cheats 0
+}
+
+block bypass
+{
+ temp_bypassed 1
+ es es_tell event_var(userid) #lightgreen project_hl2 v1 - sv_cheats 1 gets bypassed next round
+}
+
+block lo3
+{
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ say LIVE on three restarts!!!
+ es_delayed 1.0 mp_restartgame 1
+ es_delayed 2.0 say Restart 1
+ es_delayed 4.0 mp_restartgame 1
+ es_delayed 5.0 say Restart 2
+ es_delayed 8.0 mp_restartgame 1
+ es_delayed 9.0 say Restart 3
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+ es_delayed 10.0 say MATCH IS LIVE!!!
+}
+
+block bhopbypass
+{
+ es_flags remove notify sv_enableboost
+ es_flags remove replicated sv_enableboost
+ es_flags remove notify sv_enablebunnyhopping
+ es_flags remove replicated sv_enablebunnyhopping
+ es_flags remove notify sv_airaccelerate
+ es_flags remove replicated sv_airaccelerate
+ es_flags remove notify sv_tags
+ es_flags remove replicated sv_tags
+ sv_enableboost 1
+ sv_enablebunnyhopping 1
+ sv_airaccelerate 2444.2121
+}
